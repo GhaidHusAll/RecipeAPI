@@ -30,25 +30,25 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
+            <EditText
                 android:id="@+id/tvAuthor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:textSize="20sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textAlignment="center"
                 android:hint="Author"
-                android:inputType="textPersonName"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:inputType="textPersonName" />
 
-            <TextView
+            <EditText
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:textSize="25sp"
+                android:textSize="35sp"
+
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textAlignment="center"
@@ -56,48 +56,58 @@
                 android:inputType="textPersonName"
                 tools:ignore="TouchTargetSizeCheck" />
 
-            <TextView
+            <EditText
                 android:id="@+id/tvIngredients"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
                 android:ems="10"
-                android:textSize="15sp"
+                android:textSize="20sp"
                 android:textStyle="italic"
                 android:textColor="@color/black"
                 android:hint="ingredients"
-                android:inputType="textPersonName"
                 tools:ignore="TouchTargetSizeCheck" />
 
-            <TextView
+            <EditText
                 android:id="@+id/tvInstructions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:textSize="15sp"
-                android:textStyle="italic"
+                android:textSize="20sp"
+                android:inputType="textMultiLine"
                 android:textColor="@color/black"
                 android:hint="instructions"
-                android:inputType="textPersonName"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal"
-                android:layout_margin="30dp"
                 android:orientation="horizontal">
 
 
-
-
+                <Button
+                    android:id="@+id/btnDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#D7FF9800"
+                    android:textSize="20sp"
+                    android:text="Delete" />
 
                 <Button
                     android:id="@+id/btnBack"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#D7FF9800"
                     android:textSize="20sp"
                     android:text="Back" />
+                <Button
+                    android:id="@+id/btnEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#D7FF9800"
+                    android:textSize="20sp"
+                    android:text="Edit" />
             </LinearLayout>
 
 

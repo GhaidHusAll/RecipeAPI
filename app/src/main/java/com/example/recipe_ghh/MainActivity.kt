@@ -4,8 +4,21 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.recipe_ghh.api.API
+import com.example.recipe_ghh.api.Client
+import com.example.recipe_ghh.api.RecipeesItem
+import com.example.recipe_ghh.api.Recipes
 import com.example.recipe_ghh.databinding.ActivityMainBinding
+import com.example.recipe_ghh.room.DatabaseApp
+import com.example.recipe_ghh.room.Recipe
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,8 +26,9 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
-    private lateinit var recipeList : ArrayList<RecipeesItem>
-    public var index = 0
+    private lateinit var recipeList : ArrayList<Recipe>
+    private val dao by lazy { DatabaseApp.getDB(this).myDao() }
+     var index = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -24,7 +38,8 @@ class MainActivity : AppCompatActivity() {
             val toAddActivity = Intent(this, MainActivityAdd::class.java)
             startActivity(toAddActivity)
         }
-        getRecipes()
+       // getRecipes()
+        gerRecipesRoom()
     }
 
     private fun getRecipes(){
@@ -33,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         apiGET?.getRecipe()?.enqueue(object: Callback<Recipes> {
             override fun onResponse(call: Call<Recipes>, response: Response<Recipes>) {
                 try {
-                    recipeList = response.body()!!
+                  //  recipeList = response.body()!!
                     setMainRVAdapter()
                     Log.d("MAIN", "ISSUE: successfully")
 
@@ -43,11 +58,25 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<Recipes>, t: Throwable) {
-                TODO("Not yet implemented")
+                Toast.makeText(this@MainActivity, "Something went wrong not able to fetch Recipes",
+                    Toast.LENGTH_LONG).show()
             }
 
 
         })
+    }
+    private fun gerRecipesRoom(){
+        CoroutineScope(IO).launch {
+            val recipes = async { dao.getRecipes() }.await()
+            if (recipes.isNotEmpty()){
+                recipeList = recipes as ArrayList<Recipe>
+                withContext(Main){
+                    setMainRVAdapter()
+                }
+            }else{
+                Log.d("MAIN", "Not able to get data")
+            }
+        }
     }
     fun setMainRVAdapter(){
         binding.mainRV.adapter = RecipesAdapter(recipeList,this)
@@ -60,6 +89,8 @@ class MainActivity : AppCompatActivity() {
         toDisplayActivity.putExtra("recipeAuthor" , recipeList[recipeIndex].author)
         toDisplayActivity.putExtra("recipeIng" , recipeList[recipeIndex].ingredients)
         toDisplayActivity.putExtra("recipeIns" , recipeList[recipeIndex].instructions)
+        toDisplayActivity.putExtra("recipeId" , recipeList[recipeIndex].pk)
+
 
         startActivity(toDisplayActivity)
     }
