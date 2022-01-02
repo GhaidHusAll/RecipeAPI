@@ -8,7 +8,7 @@ import com.example.recipe_ghh.api.RecipeesItem
 import com.example.recipe_ghh.databinding.RowsBinding
 import com.example.recipe_ghh.room.Recipe
 
-class RecipesAdapter(private val list: ArrayList<Recipe>, private val activity: Activity):RecyclerView.Adapter<RecipesAdapter.MyHolder>() {
+class RecipesAdapter(private var list: List<Recipe>, private val activity: Activity):RecyclerView.Adapter<RecipesAdapter.MyHolder>() {
     class MyHolder(val binding: RowsBinding):RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHolder {
@@ -33,5 +33,9 @@ class RecipesAdapter(private val list: ArrayList<Recipe>, private val activity: 
     }
 
     override fun getItemCount() = list.size
+    fun update(newList: List<Recipe>){
+        this.list = newList
+        notifyDataSetChanged()
+    }
 }
 

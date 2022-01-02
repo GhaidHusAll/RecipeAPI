@@ -5,10 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.recipe_ghh.ViewModel.RecipeViewModel
 import com.example.recipe_ghh.api.API
 import com.example.recipe_ghh.api.Client
-import com.example.recipe_ghh.api.RecipeesItem
 import com.example.recipe_ghh.api.Recipes
 import com.example.recipe_ghh.databinding.ActivityMainBinding
 import com.example.recipe_ghh.room.DatabaseApp
@@ -26,30 +27,39 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
-    private lateinit var recipeList : ArrayList<Recipe>
+    private lateinit var recipeList : List<Recipe>
+    private lateinit var myAdapter: RecipesAdapter
     private val dao by lazy { DatabaseApp.getDB(this).myDao() }
-     var index = 0
+    private val vm by lazy { ViewModelProvider(this).get(RecipeViewModel::class.java) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
+        setMainRVAdapter()
+
         binding.fABtnAdd.setOnClickListener{
             val toAddActivity = Intent(this, MainActivityAdd::class.java)
             startActivity(toAddActivity)
         }
        // getRecipes()
-        gerRecipesRoom()
+       // gerRecipesRoom()
+
+        vm.getRecipes(dao).observe(this,{
+            recipes ->
+            recipeList = recipes
+            myAdapter.update(recipeList)
+        })
     }
 
     private fun getRecipes(){
-        recipeList = arrayListOf()
+//        recipeList = arrayListOf()
         val apiGET = Client().getTheClient()?.create(API::class.java)
         apiGET?.getRecipe()?.enqueue(object: Callback<Recipes> {
             override fun onResponse(call: Call<Recipes>, response: Response<Recipes>) {
                 try {
                   //  recipeList = response.body()!!
-                    setMainRVAdapter()
+                  //  setMainRVAdapter()
                     Log.d("MAIN", "ISSUE: successfully")
 
                 }catch (e:Exception){
@@ -71,15 +81,16 @@ class MainActivity : AppCompatActivity() {
             if (recipes.isNotEmpty()){
                 recipeList = recipes as ArrayList<Recipe>
                 withContext(Main){
-                    setMainRVAdapter()
                 }
             }else{
                 Log.d("MAIN", "Not able to get data")
             }
         }
     }
-    fun setMainRVAdapter(){
-        binding.mainRV.adapter = RecipesAdapter(recipeList,this)
+    private fun setMainRVAdapter(){
+        recipeList = listOf()
+        myAdapter= RecipesAdapter(recipeList,this)
+        binding.mainRV.adapter = myAdapter
         binding.mainRV.layoutManager = LinearLayoutManager(this)
         binding.mainRV.setHasFixedSize(true)
     }

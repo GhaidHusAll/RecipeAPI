@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import com.example.recipe_ghh.ViewModel.RecipeViewModel
 import com.example.recipe_ghh.api.API
 import com.example.recipe_ghh.api.Client
 import com.example.recipe_ghh.api.RecipeesItem
@@ -11,8 +13,7 @@ import com.example.recipe_ghh.databinding.ActivityMainDisplayBinding
 import com.example.recipe_ghh.room.DatabaseApp
 import com.example.recipe_ghh.room.Recipe
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
@@ -23,6 +24,8 @@ import retrofit2.Response
 class MainActivityDisplay : AppCompatActivity() {
     private lateinit var binding : ActivityMainDisplayBinding
     private val daoForUD by lazy { DatabaseApp.getDB(this).myDao() }
+    private val vm by lazy { ViewModelProvider(this).get(RecipeViewModel::class.java) }
+
     private var  recipeTitle = ""
     private var  recipeAuthor = ""
     private var  recipeIng = ""
@@ -38,12 +41,10 @@ class MainActivityDisplay : AppCompatActivity() {
             backToMain()
         }
         binding.btnDelete.setOnClickListener {
-            //deleteRecipeById(id)
-            deleteRecipeRoom(Recipe(recipeAuthor,recipeIng,recipeIng,id,recipeTitle))
+            deleteRecipeRoomVM(Recipe(recipeAuthor,recipeIng,recipeIng,id,recipeTitle))
         }
         binding.btnEdit.setOnClickListener {
-           // editRecipe(id)
-            editRecipeRoom()
+            editRecipeRoomVM()
         }
     }
 
@@ -98,10 +99,10 @@ class MainActivityDisplay : AppCompatActivity() {
         })
     }
 
-    private fun deleteRecipeRoom(recipe:Recipe){
-        CoroutineScope(IO).launch {
-            val isDelete = daoForUD.deleteRecipe(recipe)
-            withContext(Main){
+    private fun deleteRecipeRoomVM(recipe:Recipe){
+        CoroutineScope(Dispatchers.IO).launch {
+            val isDelete = vm.deleteRecipes(recipe,daoForUD)
+            withContext(Dispatchers.Main){
                 if (isDelete > 0){
                     Toast.makeText(this@MainActivityDisplay, "Recipe Deleted successfully",
                         Toast.LENGTH_LONG).show()
@@ -113,26 +114,23 @@ class MainActivityDisplay : AppCompatActivity() {
             }
         }
     }
-    private fun editRecipeRoom(){
-       CoroutineScope(IO).launch {
-          val isUpdate = daoForUD.updateRecipe(
-              Recipe(binding.tvAuthor.text.toString(),
-                  binding.tvIngredients.text.toString(),
-                  binding.tvInstructions.text.toString(),id,
-                  binding.tvTitle.text.toString())
-          )
-           withContext(Main){
-               if (isUpdate > 0){
-                   Toast.makeText(this@MainActivityDisplay, "Recipe Updated successfully",
-                       Toast.LENGTH_LONG).show()
-                   backToMain()
-               }else{
-                   Toast.makeText(this@MainActivityDisplay, "Something went wrong not able to update Recipe",
-                       Toast.LENGTH_LONG).show()
-               }
-           }
-
-       }
+    private fun editRecipeRoomVM(){
+        CoroutineScope(Dispatchers.IO).launch {
+            val isUpdate = vm.updateRecipes( Recipe(binding.tvAuthor.text.toString(),
+                binding.tvIngredients.text.toString(),
+                binding.tvInstructions.text.toString(),id,
+                binding.tvTitle.text.toString()),daoForUD)
+            withContext(Dispatchers.Main){
+                if (isUpdate > 0){
+                    Toast.makeText(this@MainActivityDisplay, "Recipe Updated successfully",
+                        Toast.LENGTH_LONG).show()
+                    backToMain()
+                }else{
+                    Toast.makeText(this@MainActivityDisplay, "Something went wrong not able to update Recipe",
+                        Toast.LENGTH_LONG).show()
+                }
+            }
+        }
 
     }
 
