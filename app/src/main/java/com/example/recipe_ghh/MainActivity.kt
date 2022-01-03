@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
        // getRecipes()
        // gerRecipesRoom()
 
-        vm.getRecipes(dao).observe(this,{
+        vm.getRecipesFirebase().observe(this,{
             recipes ->
             recipeList = recipes
             myAdapter.update(recipeList)

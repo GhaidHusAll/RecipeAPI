@@ -76,10 +76,10 @@ class MainActivityAdd : AppCompatActivity() {
     }
     private fun addRecipeRoom(){
         CoroutineScope(IO).launch {
-            val isSave =vm.addRecipes(Recipe(binding.etAuthor.text.toString(),
+            val isSave =vm.addRecipesFirebase(Recipe(binding.etAuthor.text.toString(),
                 binding.etIngredients.text.toString(),
-                binding.etInstructions.text.toString(),0,
-                binding.etTitle.text.toString()),dao)
+                binding.etInstructions.text.toString(),"0",
+                binding.etTitle.text.toString()))
             withContext(Main){
                 if (isSave > 0){
                     Toast.makeText(this@MainActivityAdd, "Recipe Added successfully",Toast.LENGTH_LONG).show()

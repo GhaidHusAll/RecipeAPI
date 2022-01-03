@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "956584331753",
+    "project_id": "recipe-ghh",
+    "storage_bucket": "recipe-ghh.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956584331753:android:1339c15370b9957e4ee378",
+        "android_client_info": {
+          "package_name": "com.example.recipe_ghh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "956584331753-qfp3j9r2ckmd96hrrue460kchm1bmkk7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDk2w6l-uLSM7XLL3I9nrR2OH5IjusDbUk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956584331753-qfp3j9r2ckmd96hrrue460kchm1bmkk7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

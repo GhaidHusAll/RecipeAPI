@@ -30,7 +30,7 @@ class MainActivityDisplay : AppCompatActivity() {
     private var  recipeAuthor = ""
     private var  recipeIng = ""
     private var  recipeIns = ""
-    private var  id = 0
+    private var  id = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +49,7 @@ class MainActivityDisplay : AppCompatActivity() {
     }
 
     private fun displayInformation(){
-         id = intent.getIntExtra("recipeId",0)
+         id = intent.getStringExtra("recipeId").toString()
         recipeTitle = intent.getStringExtra("recipeTitle").toString()
          recipeAuthor = intent.getStringExtra("recipeAuthor").toString()
          recipeIng = intent.getStringExtra("recipeIng").toString()
@@ -101,7 +101,7 @@ class MainActivityDisplay : AppCompatActivity() {
 
     private fun deleteRecipeRoomVM(recipe:Recipe){
         CoroutineScope(Dispatchers.IO).launch {
-            val isDelete = vm.deleteRecipes(recipe,daoForUD)
+            val isDelete = vm.deleteRecipesFirebase(recipe)
             withContext(Dispatchers.Main){
                 if (isDelete > 0){
                     Toast.makeText(this@MainActivityDisplay, "Recipe Deleted successfully",
@@ -116,10 +116,10 @@ class MainActivityDisplay : AppCompatActivity() {
     }
     private fun editRecipeRoomVM(){
         CoroutineScope(Dispatchers.IO).launch {
-            val isUpdate = vm.updateRecipes( Recipe(binding.tvAuthor.text.toString(),
+            val isUpdate = vm.updateRecipesFirebase( Recipe(binding.tvAuthor.text.toString(),
                 binding.tvIngredients.text.toString(),
                 binding.tvInstructions.text.toString(),id,
-                binding.tvTitle.text.toString()),daoForUD)
+                binding.tvTitle.text.toString()))
             withContext(Dispatchers.Main){
                 if (isUpdate > 0){
                     Toast.makeText(this@MainActivityDisplay, "Recipe Updated successfully",

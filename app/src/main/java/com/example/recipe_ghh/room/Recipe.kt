@@ -7,7 +7,7 @@ data class Recipe(
     var author: String,
     var ingredients: String,
     var instructions: String,
-    @PrimaryKey(autoGenerate = true)
-    var pk: Int,
+    @PrimaryKey
+    var pk: String,
     var title: String
 )
